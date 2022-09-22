@@ -150,6 +150,23 @@ class HttpService {
     );
   }
 
+  // read
+  Future<Response<T>> read<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    return dio.get(
+      path,
+      options: options,
+      queryParameters: queryParameters,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress,
+    );
+  }
+
   Future<Response<T>> fetch<T>(RequestOptions requestOptions) {
     throw 'implement onError';
   }

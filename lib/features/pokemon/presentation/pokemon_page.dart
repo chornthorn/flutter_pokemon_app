@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pokemon_app/features/pokemon/application/filter_pokemon/filter_pokemon_bloc.dart';
+import 'package:pokemon_app/features/pokemon/domain/pokemon_model.dart';
+
+import '../application/favorite_pokemon/favorite_pokemon_bloc.dart';
+import '../application/get_pokemon_list/get_pokemon_list_bloc.dart';
+import 'pokemon_detail_page.dart';
 
 class PokemonPage extends StatefulWidget {
   const PokemonPage({Key? key}) : super(key: key);
@@ -29,10 +36,34 @@ class _PokemonPageState extends State<PokemonPage>
         });
       }
     });
+    BlocProvider.of<GetPokemonListBloc>(context).add(GetPokemonList());
+  }
+
+  String? filter;
+
+  // show filter dialog
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Filter'),
+          content: _FilterFavoriteWidget(
+            value: filter ?? "No",
+            onChanged: (value) {
+              setState(() {
+                filter = value;
+              });
+            },
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     super.build(context);
     return SafeArea(
       child: Scaffold(
@@ -43,8 +74,7 @@ class _PokemonPageState extends State<PokemonPage>
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.ease);
                 },
-                child: const Icon(Icons.arrow_upward, color: Colors.white),
-                backgroundColor: Colors.indigo,
+                child: const Icon(Icons.arrow_upward),
               )
             : null,
         body: Column(
@@ -62,41 +92,82 @@ class _PokemonPageState extends State<PokemonPage>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
-                            'Popular',
+                            'Filter',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          // view all
-                          Text(
-                            'View All',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                            ),
+                          // filter icon
+                          IconButton(
+                            icon: const Icon(Icons.filter_list),
+                            splashRadius: 20,
+                            onPressed: () {
+                              _showFilterDialog();
+                            },
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.75,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      itemCount: 20,
-                      itemBuilder: (context, index) {
-                        return PokemonCardItem(
-                          index: index + 1,
-                        );
+                    BlocBuilder<GetPokemonListBloc, GetPokemonListState>(
+                      builder: (context, state) {
+                        if (state is GetPokemonListLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (state is GetPokemonListLoaded) {
+                          // create list of pokemon local list
+                          final pokemonList = state.data;
+
+                          return BlocSelector<FilterPokemonBloc,
+                              FilterPokemonState, List<PokemonModel>>(
+                            selector: (state) {
+                              if (state.filteredPokemon.length > 0) {
+                                return state.filteredPokemon;
+                              } else {
+                                return pokemonList;
+                              }
+                            },
+                            builder: (context, filterState) {
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  // make responsive for iphone devices base [size]
+                                  childAspectRatio:
+                                      size.width < 500 ? 0.7 : 0.6,
+                                  mainAxisSpacing: 12,
+                                  crossAxisSpacing: 12,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                itemCount: filterState.length,
+                                itemBuilder: (context, index) {
+                                  // get pokemon from local list
+                                  final pokemon = filterState[index];
+                                  return PokemonCardItem(
+                                    key: ValueKey(pokemon.id),
+                                    title: pokemon.name,
+                                    imageUrl: pokemon.imageurl,
+                                    id: pokemon.id,
+                                    type: pokemon.category,
+                                    onTap: () {
+                                      print('onTap');
+                                      Navigator.pushNamed(
+                                        context,
+                                        PokemonDetailPage.routeName,
+                                        arguments: 1.toString(),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }
+                        return Container();
                       },
                     ),
                   ],
@@ -113,104 +184,241 @@ class _PokemonPageState extends State<PokemonPage>
   bool get wantKeepAlive => true;
 }
 
-class PokemonCardItem extends StatelessWidget {
-  const PokemonCardItem({
-    Key? key,
-    required this.index,
-  }) : super(key: key);
+class _FilterFavoriteWidget extends StatefulWidget {
+  const _FilterFavoriteWidget(
+      {Key? key, required this.onChanged, required this.value})
+      : super(key: key);
 
-  final int index;
+  final ValueChanged<String> onChanged;
+  final String value;
+
+  @override
+  State<_FilterFavoriteWidget> createState() => _FilterFavoriteWidgetState();
+}
+
+class _FilterFavoriteWidgetState extends State<_FilterFavoriteWidget> {
+  late String _selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedValue = widget.value;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      constraints: const BoxConstraints(minWidth: 160),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const <BoxShadow>[
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            spreadRadius: 0.5,
-            offset: Offset(5, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          // favorite icon
-          Align(
-            alignment: Alignment.topRight,
-            child: GestureDetector(
-              onTap: () {},
-              child: Icon(
-                Icons.favorite_border,
-                color: Colors.grey,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            const Text('Favorite'),
+            const Spacer(),
+            BlocSelector<GetPokemonListBloc, GetPokemonListState,
+                List<PokemonModel>>(
+              selector: (state) {
+                if (state is GetPokemonListLoaded) {
+                  return state.data;
+                } else {
+                  return [];
+                }
+              },
+              builder: (context, pokemonListState) {
+                return BlocSelector<FavoritePokemonBloc, FavoritePokemonState,
+                    FavoritePokemonState>(
+                  selector: (state) {
+                    return state;
+                  },
+                  builder: (context, state) {
+                    return DropdownButton<String>(
+                      value: _selectedValue,
+                      items: const [
+                        DropdownMenuItem(
+                          child: Text('Yes'),
+                          value: 'Yes',
+                        ),
+                        DropdownMenuItem(
+                          child: Text('No'),
+                          value: 'No',
+                        ),
+                      ],
+                      onChanged: (value) {
+                        widget.onChanged(value!);
+                        setState(() {
+                          _selectedValue = value;
+                        });
+                        if (value == 'Yes') {
+                          BlocProvider.of<FilterPokemonBloc>(context).add(
+                            FilterFavoritePokemon(
+                              pokemon: pokemonListState,
+                              favoritePokemonIds: state.favoritePokemonIds,
+                            ),
+                          );
+                        } else {
+                          BlocProvider.of<FilterPokemonBloc>(context).add(
+                            FilterFavoritePokemon(
+                              pokemon: pokemonListState,
+                              favoritePokemonIds: [],
+                            ),
+                          );
+                        }
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class PokemonCardItem extends StatelessWidget {
+  const PokemonCardItem({
+    Key? key,
+    this.onTap,
+    required this.title,
+    required this.id,
+    required this.imageUrl,
+    required this.type,
+  }) : super(key: key);
+
+  final String title;
+  final String id;
+  final String imageUrl;
+  final String type;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        constraints: const BoxConstraints(minWidth: 160, minHeight: 200),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: const <BoxShadow>[
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+              spreadRadius: 0.5,
+              offset: Offset(5, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            // favorite icon
+            BlocSelector<FavoritePokemonBloc, FavoritePokemonState,
+                FavoritePokemonState>(
+              selector: (state) {
+                return state;
+              },
+              builder: (context, state) {
+                // remove first character '#' from id
+                final id = this.id.substring(1);
+                return Align(
+                  alignment: Alignment.topRight,
+                  child: BlocSelector<GetPokemonListBloc, GetPokemonListState,
+                      List<PokemonModel>>(
+                    selector: (state) {
+                      if (state is GetPokemonListLoaded) {
+                        return state.data;
+                      } else {
+                        return [];
+                      }
+                    },
+                    builder: (context, pokemonState) {
+                      return GestureDetector(
+                        onTap: () {
+                          if (state.favoritePokemonIds
+                              .contains(int.parse(id))) {
+                            BlocProvider.of<FavoritePokemonBloc>(context)
+                                .add(RemoveFavoritePokemon(int.parse(id)));
+                          } else {
+                            BlocProvider.of<FavoritePokemonBloc>(context)
+                                .add(AddFavoritePokemon(int.parse(id)));
+                          }
+                        },
+                        child: Icon(
+                          Icons.favorite_border,
+                          color:
+                              state.favoritePokemonIds.contains(int.parse(id))
+                                  ? Colors.red
+                                  : Colors.grey,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            // Image
+            Center(
+              child: Image.network(
+                imageUrl,
+                height: 100,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(
+                    child: Icon(Icons.error),
+                  );
+                },
               ),
             ),
-          ),
-          // Image
-          Center(
-            child: Image.network(
-              'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$index.png',
-              height: 100,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const Center(
-                  child: CircularProgressIndicator.adaptive(),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(
-                  child: Icon(Icons.error),
-                );
-              },
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Name
-              Text(
-                'Bulbasaur',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("ID:"),
-                  Text(
-                    "#133",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("ID:"),
+                    Text(
+                      id,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              // category
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Type: "),
-                  Text(
-                    "Normal",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
+                  ],
+                ),
+                // category
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Type: "),
+                    Text(
+                      type,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          )
-        ],
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -226,7 +434,7 @@ class _buildSearchBox extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black12,

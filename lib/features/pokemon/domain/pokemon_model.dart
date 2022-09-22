@@ -18,8 +18,8 @@ class PokemonModel {
   late final int specialDefense;
   late final int speed;
   late final int total;
-  late final String malePercentage;
-  late final String femalePercentage;
+  late final String? malePercentage;
+  late final String? femalePercentage;
   late final int genderless;
   late final String cycles;
   late final String eggGroups;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokemon_app/common/l10n/l10n.dart';
 
 import '../../pokemon/presentation/pokemon_category_page.dart';
 import '../../pokemon/presentation/pokemon_page.dart';
@@ -37,10 +38,10 @@ class _MainPageState extends State<MainPage> {
         children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
-            label: 'Home',
+            label: context.l10n.home,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category_outlined),
@@ -48,14 +49,15 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
-            label: 'School',
+            label: 'Settings',
           ),
         ],
         // this will be set when a new tab is tapped
         currentIndex: _selectedIndex,
         // this will be set when a new tab is tapped
-        selectedItemColor: Colors.indigo[800],
         onTap: _onItemTapped,
+        selectedFontSize: 14,
+        unselectedFontSize: 14,
       ),
     );
   }

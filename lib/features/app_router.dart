@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app/presentation/main_page.dart';
+import 'pokemon/presentation/pokemon_detail_page.dart';
 import 'pokemon/presentation/pokemon_page.dart';
 import 'splash/presentation/splash_page.dart';
 
@@ -9,6 +10,7 @@ class AppRouter {
   static const String initialRoute = SplashPage.routeName;
 
   static RouteFactory value = (RouteSettings settings) {
+    var arguments = settings.arguments;
     switch (settings.name) {
       case SplashPage.routeName:
         return MaterialPageRoute(
@@ -21,6 +23,13 @@ class AppRouter {
       case PokemonPage.routeName:
         return MaterialPageRoute(
           builder: (_) => PokemonPage(),
+        );
+      case PokemonDetailPage.routeName:
+
+        return MaterialPageRoute(
+          builder: (_) => PokemonDetailPage(
+            productId: arguments as String,
+          ),
         );
       default:
         return MaterialPageRoute(

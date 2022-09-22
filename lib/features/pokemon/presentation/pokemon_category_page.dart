@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'pokemon_page.dart';
 
 class PokemonCategoryPage extends StatefulWidget {
@@ -15,6 +14,7 @@ class _PokemonCategoryPageState extends State<PokemonCategoryPage>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     super.build(context);
     return SafeArea(
       child: Scaffold(
@@ -44,13 +44,13 @@ class _PokemonCategoryPageState extends State<PokemonCategoryPage>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      PokemonCardItem(index: 80),
-                      const SizedBox(width: 12),
-                      PokemonCardItem(index: 1),
-                      const SizedBox(width: 12),
-                      PokemonCardItem(index: 1),
-                      const SizedBox(width: 12),
-                      PokemonCardItem(index: 90),
+                      // PokemonCardItem(index: 80),
+                      // const SizedBox(width: 12),
+                      // PokemonCardItem(index: 1),
+                      // const SizedBox(width: 12),
+                      // PokemonCardItem(index: 1),
+                      // const SizedBox(width: 12),
+                      // PokemonCardItem(index: 90),
                     ],
                   ),
                 ),
@@ -82,10 +82,9 @@ class _PokemonCategoryPageState extends State<PokemonCategoryPage>
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 0.75,
+                        childAspectRatio: size.width < 500 ? 0.7 : 0.6,
                         mainAxisSpacing: 12,
                         crossAxisSpacing: 12,
                       ),
@@ -93,9 +92,10 @@ class _PokemonCategoryPageState extends State<PokemonCategoryPage>
                           horizontal: 16, vertical: 8),
                       itemCount: 10,
                       itemBuilder: (context, index) {
-                        return PokemonCardItem(
-                          index: index + 1,
-                        );
+                        // return PokemonCardItem(
+                        //   index: index + 1,
+                        // );
+                        return Container();
                       },
                     ),
                   ],
@@ -128,21 +128,31 @@ class LabelCategoryItem extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.indigo : Colors.white,
+        // set color that can be changed by theme
+        color: isSelected
+            ? Theme.of(context).primaryColor
+            : Theme.of(context).cardColor,
+        // color: isSelected ? Colors.indigo : Colors.white,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3), // changes position of shadow
+            // set color that can be changed by theme
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 1,
+            offset: const Offset(0, 1), // changes position of shadow
           ),
         ],
       ),
-      child: Text(title,
-          style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                color: isSelected ? Colors.white : Colors.black,
-              )),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: isSelected
+              ? Theme.of(context).primaryColorLight
+              : Theme.of(context).textTheme.bodyText1!.color,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }

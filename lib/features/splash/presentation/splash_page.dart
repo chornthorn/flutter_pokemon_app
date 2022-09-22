@@ -23,15 +23,23 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(width: 16),
-            Text('Loading...'),
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Spacer(flex: 3),
+          Image.network(
+            'https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png',
+            width: 200,
+            height: 200,
+          ),
+          Spacer(flex: 2),
+          const SizedBox(height: 16),
+
+          const Center(
+            child: CircularProgressIndicator.adaptive(),
+          ),
+          Spacer(flex: 2),
+        ],
       ),
     );
   }
