@@ -1,5 +1,5 @@
 name: pokemon_app
-description: A Very Good Project created by Very Good CLI.
+description: Pokemon App
 version: 1.0.0+1
 publish_to: none
 
@@ -27,7 +27,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mocktail: ^0.3.0
-  very_good_analysis: ^3.0.2
 
 flutter:
   uses-material-design: true
