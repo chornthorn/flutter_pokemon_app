@@ -42,6 +42,7 @@ class _PokemonPageState extends State<PokemonPage>
   }
 
   String? filter;
+  var _isEnableFilter = false;
 
   // show filter dialog
   void _showFilterDialog() {
@@ -53,6 +54,16 @@ class _PokemonPageState extends State<PokemonPage>
           content: _FilterFavoriteWidget(
             value: filter ?? "No",
             onChanged: (value) {
+              if (value == "No") {
+                setState(() {
+                  _isEnableFilter = false;
+                });
+              } else {
+                setState(() {
+                  _isEnableFilter = true;
+                });
+              }
+
               setState(() {
                 filter = value;
               });
@@ -65,7 +76,6 @@ class _PokemonPageState extends State<PokemonPage>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     super.build(context);
     return SafeArea(
       child: Scaffold(
@@ -141,60 +151,15 @@ class _PokemonPageState extends State<PokemonPage>
                                   }
                                 },
                                 builder: (context, localSearchState) {
-                                  return GridView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      // make responsive for iphone devices base [size]
-                                      childAspectRatio:
-                                          size.width < 500 ? 0.7 : 0.6,
-                                      mainAxisSpacing: 12,
-                                      crossAxisSpacing: 12,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 8),
-                                    itemCount: localSearchState.length,
-                                    itemBuilder: (context, index) {
-                                      // get pokemon from local list
-                                      final pokemon = localSearchState[index];
-                                      return PokemonCardItem(
-                                        key: ValueKey(pokemon.id),
-                                        title: pokemon.name,
-                                        imageUrl: pokemon.imageurl,
-                                        id: pokemon.id,
-                                        type: pokemon.category,
-                                        onTap: () {
-                                          print('onTap');
-                                          Navigator.pushNamed(
-                                            context,
-                                            PokemonDetailPage.routeName,
-                                            arguments: {
-                                              'id': pokemon.id,
-                                              'name': pokemon.name,
-                                              'imageUrl': pokemon.imageurl,
-                                              'type': pokemon.category,
-                                              'description':
-                                                  pokemon.xdescription,
-                                              'weaknesses': pokemon.weaknesses,
-                                              'height': pokemon.height,
-                                              'weight': pokemon.weight,
-                                              'speed': pokemon.speed.toString(),
-                                              'defense':
-                                                  pokemon.defense.toString(),
-                                              'attack':
-                                                  pokemon.attack.toString(),
-                                              'category': pokemon.category,
-                                              'typeofpokemon':
-                                                  pokemon.typeofpokemon,
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
+                                  if (!_isEnableFilter) {
+                                    return _BuildPokemonItem(
+                                      pokemons: localSearchState,
+                                    );
+                                  } else {
+                                    return _BuildPokemonItem(
+                                      pokemons: filterState,
+                                    );
+                                  }
                                 },
                               );
                             },
@@ -215,6 +180,63 @@ class _PokemonPageState extends State<PokemonPage>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class _BuildPokemonItem extends StatelessWidget {
+  const _BuildPokemonItem({Key? key, required this.pokemons}) : super(key: key);
+
+  final List<PokemonModel> pokemons;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        // make responsive for iphone devices base [size]
+        childAspectRatio: size.width < 500 ? 0.7 : 0.6,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: pokemons.length,
+      itemBuilder: (context, index) {
+        // get pokemon from local list
+        final pokemon = pokemons[index];
+        return PokemonCardItem(
+          key: ValueKey(pokemon.id),
+          title: pokemon.name,
+          imageUrl: pokemon.imageurl,
+          id: pokemon.id,
+          type: pokemon.category,
+          onTap: () {
+            print('onTap');
+            Navigator.pushNamed(
+              context,
+              PokemonDetailPage.routeName,
+              arguments: {
+                'id': pokemon.id,
+                'name': pokemon.name,
+                'imageUrl': pokemon.imageurl,
+                'type': pokemon.category,
+                'description': pokemon.xdescription,
+                'weaknesses': pokemon.weaknesses,
+                'height': pokemon.height,
+                'weight': pokemon.weight,
+                'speed': pokemon.speed.toString(),
+                'defense': pokemon.defense.toString(),
+                'attack': pokemon.attack.toString(),
+                'category': pokemon.category,
+                'typeofpokemon': pokemon.typeofpokemon,
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
 class _FilterFavoriteWidget extends StatefulWidget {
