@@ -33,7 +33,7 @@ Future<void> initializationDependencies() async {
 
 class DemoService {
   Future<DemoService> init() async {
-    return Future.delayed(const Duration(milliseconds: 2000), () {
+    return Future.delayed(const Duration(milliseconds: 0), () {
       prints();
       return this;
     });
