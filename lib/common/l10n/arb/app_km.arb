@@ -4,5 +4,29 @@
   "@counterAppBarTitle": {
     "description": "ការរាប់ចំនួន"
   },
-  "home": "ទំព័រដើម"
+  "home": "ទំព័រដើម",
+  "catalog": "កាតាឡុក",
+  "settings": "ការកំណត់",
+  "filter": "តម្រង",
+  "search": "ស្វែងរក",
+  "searchHint": "ស្វែងរក...",
+  "no": "ទេ",
+  "yes": "បាទ",
+  "cancel": "បោះបង់",
+  "ok": "យល់ព្រម",
+  "darkMode": "ផ្ទៃខ្មៅ",
+  "enableDarkMode": "បើកផ្ទៃខ្មៅ",
+  "lightMode": "Light Mode",
+  "language": "ភាសា",
+  "english": "អង់គ្លេស",
+  "khmer": "ខ្មែរ",
+  "changeLanguage": "ផ្លាស់ប្តូរភាសា",
+  "changeTheme": "ផ្លាស់ប្តូរផ្ទាំងពន្លឺ",
+  "about": "អំពី",
+  "aboutThisApp": "អំពីកម្មវិធីនេះ",
+  "version": "កំណែ",
+  "versionNumber": "១.០.០",
+  "pleaseSelectLanguage": "សូមជ្រើសរើសភាសា",
+  "topCategory": "ប្រភេទពេញនិយម",
+  "viewAll": "មើលទាំងអស់"
 }

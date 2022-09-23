@@ -28,7 +28,7 @@ class AppRouter {
 
         return MaterialPageRoute(
           builder: (_) => PokemonDetailPage(
-            productId: arguments as String,
+            arguments: arguments as Map<String,dynamic>,
           ),
         );
       default:

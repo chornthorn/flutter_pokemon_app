@@ -1,8 +1,32 @@
 {
-    "@@locale": "en",
-    "counterAppBarTitle": "Counter",
-    "@counterAppBarTitle": {
-        "description": "Text shown in the AppBar of the Counter Page"
-    },
-    "home": "Home"
+  "@@locale": "en",
+  "counterAppBarTitle": "Counter",
+  "@counterAppBarTitle": {
+    "description": "Text shown in the AppBar of the Counter Page"
+  },
+  "home": "Home",
+  "catalog": "Catalog",
+  "settings": "Settings",
+  "filter": "Filter",
+  "search": "Search",
+  "searchHint": "Search...",
+  "no": "No",
+  "yes": "Yes",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "darkMode": "Dark Mode",
+  "enableDarkMode": "Enable Dark Mode",
+  "lightMode": "Light Mode",
+  "language": "Language",
+  "english": "English",
+  "khmer": "Khmer",
+  "changeLanguage": "Change Language",
+  "changeTheme": "Change Theme",
+  "about": "About",
+  "aboutThisApp": "About this app",
+  "version": "Version",
+  "versionNumber": "1.0.0",
+  "pleaseSelectLanguage": "Please select language",
+  "topCategory": "Top Category",
+  "viewAll": "View All"
 }

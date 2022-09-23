@@ -27,10 +27,10 @@ class _SplashPageState extends State<SplashPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Spacer(flex: 3),
-          Image.network(
-            'https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png',
-            width: 200,
-            height: 200,
+          Image.asset(
+            'assets/img/pngegg.png',
+            height: 250,
+            width: 250,
           ),
           Spacer(flex: 2),
           const SizedBox(height: 16),

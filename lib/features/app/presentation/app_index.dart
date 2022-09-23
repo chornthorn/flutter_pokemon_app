@@ -38,8 +38,8 @@ class _AppIndex extends StatelessWidget {
           },
           builder: (context, langState) {
             return MaterialApp(
-              // set color indigo for primary color and accent color
               theme: ThemeData(
+                fontFamily: 'NatoSansKhmer',
                 colorScheme: ColorScheme.light(
                   primary: Colors.indigo,
                   secondary: Colors.indigoAccent,
@@ -47,6 +47,7 @@ class _AppIndex extends StatelessWidget {
               ),
               // set dark theme
               darkTheme: ThemeData(
+                fontFamily: 'NatoSansKhmer',
                 brightness: Brightness.dark,
                 colorScheme: ColorScheme.dark(
                   primary: Colors.green,
@@ -59,6 +60,7 @@ class _AppIndex extends StatelessWidget {
                 AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
               ],
               supportedLocales: AppLocalizations.supportedLocales,
               locale: langState,

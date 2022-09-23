@@ -8,9 +8,13 @@ part 'filter_pokemon_event.dart';
 
 part 'filter_pokemon_state.dart';
 
+// _filterPokemon
+
 class FilterPokemonBloc extends Bloc<FilterPokemonEvent, FilterPokemonState> {
   FilterPokemonBloc() : super(FilterPokemonState.initial()) {
-    on<FilterPokemon>(_onFilterPokemon);
+    on<FilterPokemon>(
+      _onFilterPokemon,
+    );
     on<FilterFavoritePokemon>(_onFilterFavoritePokemon);
     on<ClearFilter>(_onClearFilter);
   }
@@ -20,7 +24,7 @@ class FilterPokemonBloc extends Bloc<FilterPokemonEvent, FilterPokemonState> {
 // filter pokemon
     final filteredPokemon = event.pokemon
         .where((pokemon) =>
-            pokemon.category.toLowerCase().contains(event.filter.toLowerCase()))
+            pokemon.name.toLowerCase().contains(event.filter.toLowerCase()))
         .toList();
 
     // emit new state

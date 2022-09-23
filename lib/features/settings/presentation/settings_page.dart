@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pokemon_app/common/l10n/l10n.dart';
 
 import '../../app/application/change_language/change_language_bloc.dart';
 import '../../app/application/change_theme/change_theme_bloc.dart';
@@ -23,7 +24,7 @@ class SettingsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Settings",
+                      context.l10n.settings,
                       style: Theme.of(context).textTheme.headline5,
                     ),
                   ],
@@ -40,8 +41,8 @@ class SettingsPage extends StatelessWidget {
                       },
                       builder: (context, state) {
                         return SettingsCardItem(
-                          title: "Dark Mode",
-                          subtitle: "Enable dark mode",
+                          title: context.l10n.darkMode,
+                          subtitle: context.l10n.enableDarkMode,
                           icon: Icons.dark_mode,
                           isSwitch: true,
                           value: state == ThemeMode.dark,
@@ -55,8 +56,8 @@ class SettingsPage extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     SettingsCardItem(
-                      title: "Language",
-                      subtitle: "Change language",
+                      title: context.l10n.language,
+                      subtitle: context.l10n.changeLanguage,
                       icon: Icons.language,
                       onTap: () {
                         showBottomSheet(context);
@@ -64,8 +65,8 @@ class SettingsPage extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     SettingsCardItem(
-                      title: "About",
-                      subtitle: "About this app",
+                      title: context.l10n.about,
+                      subtitle: context.l10n.aboutThisApp,
                       icon: Icons.info,
                       onTap: () {
                         showSimpleAboutDialog(context);
@@ -138,8 +139,8 @@ class SettingsPage extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 16, top: 8),
-                    child: const Text(
-                      "Please select your language",
+                    child: Text(
+                      context.l10n.pleaseSelectLanguage,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

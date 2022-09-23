@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pokemon_app/common/l10n/l10n.dart';
+
+import '../application/get_pokemon_list/get_pokemon_list_bloc.dart';
+import '../domain/pokemon_model.dart';
+import 'pokemon_detail_page.dart';
 import 'pokemon_page.dart';
 
 class PokemonCategoryPage extends StatefulWidget {
@@ -26,12 +32,13 @@ class _PokemonCategoryPageState extends State<PokemonCategoryPage>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Top Category",
+                    Text(context.l10n.topCategory,
                         style: Theme.of(context).textTheme.headline6),
                     // View all
                     TextButton(
                       onPressed: () {},
-                      child: const Text('View all'),
+                      child: Text(context.l10n.viewAll,
+                          style: Theme.of(context).textTheme.subtitle2),
                     ),
                   ],
                 ),
@@ -41,17 +48,54 @@ class _PokemonCategoryPageState extends State<PokemonCategoryPage>
                 child: Padding(
                   padding:
                       const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // PokemonCardItem(index: 80),
-                      // const SizedBox(width: 12),
-                      // PokemonCardItem(index: 1),
-                      // const SizedBox(width: 12),
-                      // PokemonCardItem(index: 1),
-                      // const SizedBox(width: 12),
-                      // PokemonCardItem(index: 90),
-                    ],
+                  child: BlocSelector<GetPokemonListBloc, GetPokemonListState,
+                      List<PokemonModel>>(
+                    selector: (state) {
+                      if (state is GetPokemonListLoaded) {
+                        return state.data;
+                      } else {
+                        return [];
+                      }
+                    },
+                    builder: (context, state) {
+                      return Row(
+                        children: [
+                          for (var i = 0; i < state.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: PokemonCardItem(
+                                key: ValueKey(state[i].id),
+                                title: state[i].name,
+                                imageUrl: state[i].imageurl,
+                                id: state[i].id,
+                                type: state[i].category,
+                                onTap: () {
+                                  print('onTap');
+                                  Navigator.pushNamed(
+                                    context,
+                                    PokemonDetailPage.routeName,
+                                    arguments: {
+                                      'id': state[i].id,
+                                      'name': state[i].name,
+                                      'imageUrl': state[i].imageurl,
+                                      'type': state[i].category,
+                                      'description': state[i].xdescription,
+                                      'weaknesses': state[i].weaknesses,
+                                      'height': state[i].height,
+                                      'weight': state[i].weight,
+                                      'speed': state[i].speed.toString(),
+                                      'defense': state[i].defense.toString(),
+                                      'attack': state[i].attack.toString(),
+                                      'category': state[i].category,
+                                      'typeofpokemon': state[i].typeofpokemon,
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -79,23 +123,62 @@ class _PokemonCategoryPageState extends State<PokemonCategoryPage>
               SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: size.width < 500 ? 0.7 : 0.6,
-                        mainAxisSpacing: 12,
-                        crossAxisSpacing: 12,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      itemCount: 10,
-                      itemBuilder: (context, index) {
-                        // return PokemonCardItem(
-                        //   index: index + 1,
-                        // );
-                        return Container();
+                    BlocSelector<GetPokemonListBloc, GetPokemonListState,
+                        List<PokemonModel>>(
+                      selector: (state) {
+                        if (state is GetPokemonListLoaded) {
+                          return state.data;
+                        } else {
+                          return [];
+                        }
+                      },
+                      builder: (context, state) {
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: size.width < 500 ? 0.7 : 0.6,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          itemCount: state.length,
+                          itemBuilder: (context, index) {
+                            final pokemon = state[index];
+                            return PokemonCardItem(
+                              key: ValueKey(pokemon.id),
+                              title: pokemon.name,
+                              imageUrl: pokemon.imageurl,
+                              id: pokemon.id,
+                              type: pokemon.category,
+                              onTap: () {
+                                print('onTap');
+                                Navigator.pushNamed(
+                                  context,
+                                  PokemonDetailPage.routeName,
+                                  arguments: {
+                                    'id': pokemon.id,
+                                    'name': pokemon.name,
+                                    'imageUrl': pokemon.imageurl,
+                                    'type': pokemon.category,
+                                    'description': pokemon.xdescription,
+                                    'weaknesses': pokemon.weaknesses,
+                                    'height': pokemon.height,
+                                    'weight': pokemon.weight,
+                                    'speed': pokemon.speed.toString(),
+                                    'defense': pokemon.defense.toString(),
+                                    'attack': pokemon.attack.toString(),
+                                    'category': pokemon.category,
+                                    'typeofpokemon': pokemon.typeofpokemon,
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        );
                       },
                     ),
                   ],

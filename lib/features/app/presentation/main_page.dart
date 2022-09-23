@@ -45,11 +45,11 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category_outlined),
-            label: 'Catalog',
+            label: context.l10n.catalog,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
-            label: 'Settings',
+            label: context.l10n.settings,
           ),
         ],
         // this will be set when a new tab is tapped
