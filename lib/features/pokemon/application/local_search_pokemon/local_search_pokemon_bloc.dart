@@ -25,10 +25,7 @@ class LocalSearchPokemonBloc
   FutureOr<void> _onLocalSearchPokemon(
       LocalSearchPokemon event, Emitter<LocalSearchPokemonState> emit) {
     // filter pokemon
-    final filteredPokemon = event.pokemons
-        .where((pokemon) =>
-            pokemon.name.toLowerCase().contains(event.query.toLowerCase()))
-        .toList();
+    final filteredPokemon = event.pokemons.where((pokemon) => pokemon.name.toLowerCase().contains(event.query.toLowerCase())).toList();
 
     // emit new state
     emit(state.copyWith(pokemons: filteredPokemon));

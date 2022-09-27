@@ -15,8 +15,7 @@ class FavoritePokemonState extends Equatable {
 
   // remove favorite pokemon
   FavoritePokemonState removeFavoritePokemon(int pokemonId) {
-    return FavoritePokemonState(
-        favoritePokemonIds.where((id) => id != pokemonId).toList());
+    return FavoritePokemonState(favoritePokemonIds.where((id) => id != pokemonId).toList());
   }
 
   // check if pokemon is favorite

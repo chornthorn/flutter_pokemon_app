@@ -38,6 +38,7 @@ class _AppIndex extends StatelessWidget {
           },
           builder: (context, langState) {
             return MaterialApp(
+              debugShowCheckedModeBanner: false,
               theme: ThemeData(
                 fontFamily: 'NatoSansKhmer',
                 colorScheme: ColorScheme.light(
